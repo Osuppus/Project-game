@@ -2,43 +2,43 @@ using UnityEngine;
 
 public class MovingPlatform : MonoBehaviour
 {
-    public float speed;  // speed of the platform
-    public int startingPoint; // starting index (position of the platform)
-    public Transform[] points; // An array of transform points (positions where the platform needs to move)
+   
+    public Transform pointA;
+    public Transform pointB;
+    public float speed = 1.5f;
 
-    private int i; //index of the array 
+    private Vector3 nextPosition;
 
-    void start()
+
+    void Start()
     {
-        transform.position = points[startingPoint].position; // Setting the position of the platform to
-                                                             // the position of one of the points using index "startingPoint"
+        nextPosition = pointB.position; //  Setting the initial target position to pointB
     }
 
-    // Update is called once per frame
-    void Update()
+    void Update()  
     {
-        // checking the distance of the platform and the point 
-        if (Vector2.Distance(transform.position, points[i].position) < 0.02f)
+        transform.position = Vector3.MoveTowards(transform.position, nextPosition, speed * Time.deltaTime); //  the object moves towards the nextPosition at the given speed
+        
+        if(transform.position == nextPosition)     // If the object has reached the nextPosition, switch to the other point
         {
-            i++; // increase the index 
-            if (i == points.Length) // check if the platform was on the last point after the index inccrease
-            {
-                i = 0; // rest the index 
-            }
-
-            // moving the platform to the point position with the index "i"
-            transform.position = Vector2.MoveTowards(transform.position, points[i].position, speed * Time.deltaTime);
+            nextPosition = (nextPosition == pointA.position) ? pointB.position : pointA.position; // switch between pointA and pointB
         }
     }
 
+   
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        collision.transform.SetParent(transform);
+        if (collision.gameObject.CompareTag("Player")) // // This allows the player to move along with the platform by making the player the child object
+        {
+            collision.transform.SetParent(transform);
+        }
+        
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        collision.transform.SetParent(null);
-
+        collision.transform.SetParent(null); // Removes the player from being a child object when they hop off the platform
     }
+    
 }
