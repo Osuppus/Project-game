@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class JumpMechanic : MonoBehaviour
 {
-     public float jumpForce = 7f; // You can change this in the Inspector
+    public float jumpForce = 7f; // You can change this in the Inspector
     private Rigidbody2D rb;
     private bool isGrounded = false;
 
