@@ -16,10 +16,10 @@ public class PlayerController : MonoBehaviour
      
 
 
-    [SerializeField] private Rigidbody2D rb;
+    [SerializeField] Rigidbody2D rb;
 
 
-    private void Start()
+    void Start()
     {
         SpeedItem.OnSpeedCollected += StartSpeedBoost; //What the speed item does when interacted with
     }
@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(SpeedBoostCoroutine(multiplyer)); //initiates speed boost
     }
     
-    private IEnumerator SpeedBoostCoroutine(float multiplyer)
+    IEnumerator SpeedBoostCoroutine(float multiplyer)
     {
         speedMultiplyer = multiplyer;
         yield return new WaitForSeconds(5f); //The amount of time the speed up abililty lasts
