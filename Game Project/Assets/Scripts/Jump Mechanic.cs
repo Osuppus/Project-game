@@ -6,6 +6,10 @@ public class JumpMechanic : MonoBehaviour
     private Rigidbody2D rb;
     private bool isGrounded = false;
 
+    private bool canDoubleJump;
+
+    
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -13,10 +17,21 @@ public class JumpMechanic : MonoBehaviour
 
     void Update()
     {
-        // Jump if Space is pressed and player is on the ground
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        // Jump input
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            if (isGrounded)
+            {
+                // Regular jump
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+                canDoubleJump = true; // Allow double jump after the first jump
+            }
+            else if (canDoubleJump)
+            {
+                // Double jump
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+                canDoubleJump = false; // Consume double jump
+            }
         }
     }
 
@@ -26,6 +41,7 @@ public class JumpMechanic : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+            canDoubleJump = false;
         }
     }
 
@@ -37,4 +53,6 @@ public class JumpMechanic : MonoBehaviour
             isGrounded = false;
         }
     }
+
+    
 }
