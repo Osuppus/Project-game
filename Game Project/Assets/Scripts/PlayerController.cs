@@ -13,9 +13,6 @@ public class PlayerController : MonoBehaviour
     private float dashingPower = 24f;
     private float dashingTime = 0.2f;
     private float dashingCooldown = 1f;
-     
-
-
     [SerializeField] Rigidbody2D rb;
 
 
@@ -74,18 +71,7 @@ public class PlayerController : MonoBehaviour
             transform.localScale = localScale;
         }
     }
-
-
-    private void FixedUpdate()
-    {
-        // If currently dashing, skip normal movement to avoid overriding dash velocity
-        if (isDashing)
-        {
-            return;
-        }
-
-        rb.linearVelocity = new Vector2(horizontal * moveSpeed * speedMultiplyer, rb.linearVelocity.y);
-    }
+    
 
     private IEnumerator Dash()
     {

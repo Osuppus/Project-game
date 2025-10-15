@@ -1,58 +1,58 @@
 using UnityEngine;
 
-public class JumpMechanic : MonoBehaviour
+namespace Mechanics
 {
-    public float jumpForce = 7f; // You can change this in the Inspector
-    private Rigidbody2D rb;
-    private bool isGrounded = false;
-
-    private bool canDoubleJump;
-
-    
-
-    void Start()
+    public class JumpMechanic : MonoBehaviour
     {
-        rb = GetComponent<Rigidbody2D>();
-    }
+        public float jumpForce = 7f; // You can change this in the Inspector
+        Rigidbody2D rb;
+        bool isGrounded = false;
+        bool canDoubleJump;
 
-    void Update()
-    {
-        // Jump input
-        if (Input.GetKeyDown(KeyCode.Space))
+        void Start()
         {
-            if (isGrounded)
+            rb = GetComponent<Rigidbody2D>();
+        }
+
+        void FixedUpdate()
+        {
+            // Jump input
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                // Regular jump
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-                canDoubleJump = true; // Allow double jump after the first jump
+                if (isGrounded)
+                {
+                    // Regular jump
+                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce); //Something's wrong here. -E
+                    canDoubleJump = true; // Allow double jump after the first jump
+                }
+                else if (canDoubleJump)
+                {
+                    // Double jump
+                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce); //And here too, I suspect. -E
+                    canDoubleJump = false; // Consume double jump
+                }
             }
-            else if (canDoubleJump)
+        }
+
+        void OnCollisionEnter2D(Collision2D collision)
+        {
+            // Check if player landed on ground
+            if (collision.gameObject.CompareTag("Ground"))      //This is giving True when touching any part of platform, including the bottom.
             {
-                // Double jump
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-                canDoubleJump = false; // Consume double jump
+                isGrounded = true;
+                canDoubleJump = false;
             }
         }
-    }
 
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        // Check if player landed on ground
-        if (collision.gameObject.CompareTag("Ground"))
+        void OnCollisionExit2D(Collision2D collision)       //Not sure if this is how we wanna do this. Might be causing problems. -E
         {
-            isGrounded = true;
-            canDoubleJump = false;
+            // Check if player left the ground
+            if (collision.gameObject.CompareTag("Ground"))
+            {
+                isGrounded = false;
+            }
         }
-    }
 
-    void OnCollisionExit2D(Collision2D collision)
-    {
-        // Check if player left the ground
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isGrounded = false;
-        }
-    }
 
-    
+    }
 }
