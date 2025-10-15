@@ -31,7 +31,7 @@ public class MovingPlatform : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player")) // // This allows the player to move along with the platform by making the player the child object
         {
-            collision.transform.SetParent(transform);
+            collision.transform.SetParent(transform); // Replace this with something less binding, like a Position Constraint component. (Check Brackeys tutorial) -E
         }
         
     }

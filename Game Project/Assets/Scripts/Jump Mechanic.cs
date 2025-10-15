@@ -6,7 +6,7 @@ namespace Mechanics
     {
         public float jumpForce = 7f; // You can change this in the Inspector
         Rigidbody2D rb;
-        bool isGrounded = false;
+        bool isGrounded;
         bool canDoubleJump;
 
         void Start()
@@ -14,7 +14,7 @@ namespace Mechanics
             rb = GetComponent<Rigidbody2D>();
         }
 
-        void FixedUpdate()
+        void Update()
         {
             // Jump input
             if (Input.GetKeyDown(KeyCode.Space))
@@ -22,13 +22,13 @@ namespace Mechanics
                 if (isGrounded)
                 {
                     // Regular jump
-                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce); //Something's wrong here. -E
+                    rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
                     canDoubleJump = true; // Allow double jump after the first jump
                 }
                 else if (canDoubleJump)
                 {
                     // Double jump
-                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce); //And here too, I suspect. -E
+                    rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
                     canDoubleJump = false; // Consume double jump
                 }
             }
