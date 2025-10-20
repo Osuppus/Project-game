@@ -5,17 +5,15 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 5f;
-    private bool isFacingRight = true;
-    private float horizontal;
-    public float speedMultiplyer = 1f;
-    private bool canDash = true;
-    private bool isDashing;
-    private float dashingPower = 24f;
-    private float dashingTime = 0.2f;
-    private float dashingCooldown = 1f;
-     
-
-
+    bool isFacingRight = true;
+    float horizontal;
+    public float speedMultiplier = 1f;
+    bool canDash = true;
+    bool isDashing = false;
+    float dashingPower = 24f;
+    float dashingTime = 0.2f;
+    float dashingCooldown = 1f;
+    float originalGravity;
     [SerializeField] Rigidbody2D rb;
 
 
@@ -24,32 +22,28 @@ public class PlayerController : MonoBehaviour
         SpeedItem.OnSpeedCollected += StartSpeedBoost; //What the speed item does when interacted with
     }
 
-    void StartSpeedBoost(float multiplyer)
+    void StartSpeedBoost(float multiplier)
     {
-        StartCoroutine(SpeedBoostCoroutine(multiplyer)); //initiates speed boost
+        StartCoroutine(SpeedBoostCoroutine(multiplier)); //initiates speed boost
     }
     
-    IEnumerator SpeedBoostCoroutine(float multiplyer)
+    IEnumerator SpeedBoostCoroutine(float multiplier)
     {
-        speedMultiplyer = multiplyer;
+        speedMultiplier = multiplier;
         yield return new WaitForSeconds(5f); //The amount of time the speed up abililty lasts
-        speedMultiplyer = 1f; // After the time limit, sets speed multiplyer back to normal
+        speedMultiplier = 1f; // After the time limit, sets speed multiplier back to normal
     }
     void Update()
     {
-        Vector3 newPosition = transform.position;
-
-        if (Input.GetKey("d"))
+        if (Input.GetKey(KeyCode.A))
         {
-            newPosition.x += moveSpeed * speedMultiplyer * Time.deltaTime;
+            transform.position = new Vector3(transform.position.x - moveSpeed * Time.deltaTime, transform.position.y);
         }
 
-        if (Input.GetKey("a"))
+        if (Input.GetKey(KeyCode.D))
         {
-            newPosition.x -= moveSpeed * speedMultiplyer * Time.deltaTime;
+            transform.position = new Vector3(transform.position.x + moveSpeed * Time.deltaTime, transform.position.y);
         }
-
-        transform.position = newPosition;
 
         if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
         {
@@ -61,37 +55,26 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        Flip();
+        // Flip();
     }
     
-    private void Flip()
-    {
-        if (isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f) // To make player dash in more than one direction
-        {
-            Vector3 localScale = transform.localScale;
-            isFacingRight = !isFacingRight;
-            localScale.x *= -1f;
-            transform.localScale = localScale;
-        }
-    }
-
-
-    private void FixedUpdate()
-    {
-        // If currently dashing, skip normal movement to avoid overriding dash velocity
-        if (isDashing)
-        {
-            return;
-        }
-
-        rb.linearVelocity = new Vector2(horizontal * moveSpeed * speedMultiplyer, rb.linearVelocity.y);
-    }
+    // private void Flip()
+    // {
+    //     if (isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f) // To make player dash in more than one direction
+    //     {
+    //         Vector3 localScale = transform.localScale;
+    //         isFacingRight = !isFacingRight;
+    //         localScale.x *= -1f;
+    //         transform.localScale = localScale;
+    //     }
+    // }
+    
 
     private IEnumerator Dash()
     {
         canDash = false; // Prevent further dashing until cooldown is over
         isDashing = true; // Indicate that a dash is in progress
-        float originalGravity = rb.gravityScale; // Store current gravity so we can restore it after the dash
+        originalGravity = rb.gravityScale; // Store current gravity so we can restore it after the dash
         rb.gravityScale = 0f; // Temporarily disable gravity during the dash to ensure smooth horizontal movement
         rb.linearVelocity = new Vector2(transform.localScale.x * dashingPower, 0f); // Set the dash velocity in the direction the character is facing
         print(rb.linearVelocity); // Optional debug output of current velocity (useful during testing)
