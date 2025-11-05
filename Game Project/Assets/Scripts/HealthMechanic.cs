@@ -16,6 +16,7 @@ namespace Mechanics
         bool gotHealed = false;
         public LayerMask ouchies;  // In the editor this is set to include the layers "Enemy" and "Hazard"
         public LayerMask yummies;  // This currently doesn't contain anything because we don't have any healing objects or associated layers.
+        private float dmgMod;
 
 
         void Start()
@@ -35,6 +36,7 @@ namespace Mechanics
             if (ouchies.Contains(collision.gameObject.layer))
             {
                 gotHit = true;
+                dmgMod = collision.gameObject.GetComponent<HarmMechanic>(/*placeholder scriptname*/).harmMod;
             }
         }
         void FixedUpdate()
@@ -49,7 +51,7 @@ namespace Mechanics
             // Take damage
             if (gotHit)
             {
-                TakeDamage();
+                TakeDamage(dmgMod);
             }
 
             
@@ -57,9 +59,14 @@ namespace Mechanics
         }
 
         // Restore health
-        private void HealDamage(int  amount = 1)
+        private void HealDamage(int modifier = 1)
         {
-            currentHealth += amount;
+            if (modifier == null)
+            {
+                modifier = 1;
+            }
+            
+            currentHealth += 1 * modifier;
             // Prevent overhealing
             if (currentHealth > maxHealth)
             {
@@ -69,9 +76,14 @@ namespace Mechanics
         }
 
 
-        void TakeDamage(int amount = 1)
+        void TakeDamage(int modifier = 1)
         {
-            currentHealth -= amount;  // Reduce current health by the amount given in the call, with a default of 1 if no amount is specified.
+            if (modifier == null)
+            {
+                modifier = 1;
+            }
+            
+            currentHealth -= 1 * modifier;  // Reduce current health by the amount given in the call, with a default of 1 if no amount is specified.
             
             // Prevent negative health. Zero should be the minimum. This is just to prevent unwanted unexpected behavior later on.
             if (currentHealth < 0)
