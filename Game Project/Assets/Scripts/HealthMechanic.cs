@@ -30,13 +30,17 @@ namespace Mechanics
             Debug.Log("Health: " +  currentHealth + "/" +  maxHealth); //  Display health status, in absence of UI feedback.
             if (yummies.Contains(collision.gameObject.layer))
             {
-                gotHealed = true;
+                gotHealed = true;  // Flip this so it gets processed on the next FixedUpdate call.
+                dmgMod = collision.gameObject.GetComponent<HarmDoer>().harmMod;  // Examine the HarmDoer script attached to the
+                                                                                 // colliding object, and transfer the value of the 'harmMod' var found there
+                                                                                 // into the 'dmgMod' var found here.
+
             }
             
             if (ouchies.Contains(collision.gameObject.layer))
             {
-                gotHit = true;
-                dmgMod = collision.gameObject.GetComponent<HarmMechanic>(/*placeholder scriptname*/).harmMod;
+                gotHit = true;  // Same as above.
+                dmgMod = collision.gameObject.GetComponent<HarmDoer>().harmMod;  // Same as above.
             }
         }
         void FixedUpdate()
@@ -45,7 +49,7 @@ namespace Mechanics
             // that they take what would have been lethal damage - the heal occurs first, potentially preventing death.
             if (gotHealed)
             {
-                HealDamage();
+                HealDamage(dmgMod);
             }
             
             // Take damage
@@ -61,12 +65,15 @@ namespace Mechanics
         // Restore health
         private void HealDamage(int modifier = 1)
         {
+            // Safety catch: In the unlikely event that the value is null, restore it to its default value.
             if (modifier == null)
             {
                 modifier = 1;
             }
             
+            // Tick up the player's health by 1 multiplied by the modifier plucked from the colliding object's HarmDoer script.
             currentHealth += 1 * modifier;
+            
             // Prevent overhealing
             if (currentHealth > maxHealth)
             {
@@ -78,12 +85,14 @@ namespace Mechanics
 
         void TakeDamage(int modifier = 1)
         {
+            // Same failsafe as above (... HealDamage() ...)
             if (modifier == null)
             {
                 modifier = 1;
             }
             
-            currentHealth -= 1 * modifier;  // Reduce current health by the amount given in the call, with a default of 1 if no amount is specified.
+            // Reduce current health by the amount given in the call, with a default of 1 if no amount is specified.
+            currentHealth -= 1 * modifier;
             
             // Prevent negative health. Zero should be the minimum. This is just to prevent unwanted unexpected behavior later on.
             if (currentHealth < 0)
@@ -94,15 +103,16 @@ namespace Mechanics
             // People die if they are killed
             if (currentHealth <= 0)
             {
+                // The Bart, The
                 Die();
             }
             
-            gotHit = false;  //  Reset the switch.
+            gotHit = false;  //  Reset the switch so it can be tripped again later.
         }
         
         void Die()
         {
-            // Death behavior. At the moment, this just turns the player sprite red.
+            // Death behavior. Currently, all this does is turn the player red. This is placeholder behavior.
             spriteRenderer.color = UnityEngine.Color.red;
         }
     }
