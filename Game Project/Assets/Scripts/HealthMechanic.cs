@@ -10,7 +10,7 @@ namespace Mechanics
     {
         // Variables Declaration Zone
         SpriteRenderer spriteRenderer;
-        public float maxHealth;
+        public static int maxHealth;
         float currentHealth;
         bool gotHit = false;
         bool gotHealed = false;
