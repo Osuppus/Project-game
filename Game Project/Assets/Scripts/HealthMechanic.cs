@@ -9,14 +9,14 @@ namespace Mechanics
     public class HealthMechanic : MonoBehaviour
     {
         // Variables Declaration Zone
-        private SpriteRenderer spriteRenderer;
-        public int maxHealth;
-        int currentHealth;
+        SpriteRenderer spriteRenderer;
+        public float maxHealth;
+        float currentHealth;
         bool gotHit = false;
         bool gotHealed = false;
         public LayerMask ouchies;  // In the editor this is set to include the layers "Enemy" and "Hazard"
         public LayerMask yummies;  // This currently doesn't contain anything because we don't have any healing objects or associated layers.
-        private float dmgMod;
+        float dmgMod;
 
 
         void Start()
@@ -63,7 +63,7 @@ namespace Mechanics
         }
 
         // Restore health
-        private void HealDamage(int modifier = 1)
+        private void HealDamage(float modifier = 1f)
         {
             // Safety catch: In the unlikely event that the value is null, restore it to its default value.
             if (modifier == null)
@@ -83,7 +83,7 @@ namespace Mechanics
         }
 
 
-        void TakeDamage(int modifier = 1)
+        void TakeDamage(float modifier = 1)
         {
             // Same failsafe as above (... HealDamage() ...)
             if (modifier == null)
