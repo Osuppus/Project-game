@@ -6,12 +6,11 @@ namespace Mechanics
 {
     public class HealthDisplay : MonoBehaviour
     {
-        // Variable Declaration Zone
+        // Variables
         GameObject[] heartsArray;
         private int maxHealth;
         private GameObject heartsContainer;
         
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
             maxHealth = HealthMechanic.maxHealth;
